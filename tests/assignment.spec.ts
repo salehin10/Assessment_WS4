@@ -1,22 +1,39 @@
 import { test, expect } from './pages/page_fixture';
 
-test('has title', async ({ airTicketPage }) => {
-  await airTicketPage.goto();
-  await airTicketPage.validateTitle();
-});
+test.describe('Air Ticket Booking Flow', () => {
+  test('Complete booking flow with validation', async ({ airTicketPage, flightListPage }) => {
+    await test.step('Navigate to air tickets page', async () => {
+      await airTicketPage.goto();
+    });
 
-test('Select one way air trip', async ({ airTicketPage }) => {
-  await airTicketPage.goto();
-  await airTicketPage.selectOneWayTrip();
-});
+    await test.step('Validate page title', async () => {
+      await airTicketPage.validateTitle();
+    });
 
-test('Select tomorrow journey date and search for available list', async({ airTicketPage,flightListPage }) => {
-  await airTicketPage.goto();
-  await airTicketPage.selectOneWayTrip();
-  await airTicketPage.selectJourneyDate();
-  await airTicketPage.clickSearchButton()
-  await flightListPage.bookFirstFlight();
-  await flightListPage.validateTotalPrice();
+    await test.step('Select one way trip', async () => {
+      await airTicketPage.selectOneWayTrip();
+    });
+
+    await test.step('Select tomorrow journey date', async () => {
+      await airTicketPage.selectJourneyDate();
+    });
+
+    await test.step('Search for flights', async () => {
+      await airTicketPage.clickSearchButton();
+    });
+
+    await test.step('Book first available flight', async () => {
+      await flightListPage.bookFirstFlight();
+    });
+
+    await test.step('Validate total price', async () => {
+      await flightListPage.validateTotalPrice();
+    });
+
+    await test.step('Click on the Continue', async () => {
+      await flightListPage.clickContinueButton();
+    })
+  });
 });
 
 

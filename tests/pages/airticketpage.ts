@@ -15,17 +15,18 @@ export class Airticketpage {
   }
 
   async validateTitle() {
- await expect(this.page.getByRole('heading', { name: 'Popular Packages' }).first()).toBeVisible();
+    await expect(this.page.getByRole('heading', { name: 'Popular Packages' }).first()).toBeVisible();
   }
+
   async selectOneWayTrip() {
-     const currentDay = new Date().getDate();
-     await this.page.getByRole('tab', { name: 'One Way' }).first().click();
+    const currentDay = new Date().getDate();
+    await this.page.getByRole('tab', { name: 'One Way' }).first().click();
   }
 
   async selectJourneyDate(){
-   let tomorrow = new Date();
-   tomorrow.setDate(tomorrow.getDate() + 1);
-   let tomorrowDay = tomorrow.getDate();
+    let tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    let tomorrowDay = tomorrow.getDate();
     await this.page.locator('//input[@type=\'text\']').nth(4).click();
     await this.page.locator('//div[@class="react-datepicker"]').nth(0).focus();
     await this.page.getByRole('option', { name: `${tomorrowDay}th,` }).click();

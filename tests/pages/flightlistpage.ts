@@ -13,27 +13,33 @@ export class FlightListPage {
       );
 
       let calculatedTotal = 0;
-
       const rowCount = await priceRows.count();
 
       for (let i = 0; i < rowCount; i++) {
           const row = priceRows.nth(i);
-          const amountText = await row.locator('div').nth(1).innerText();
-          const amount = Number(
-              amountText.replace('৳', '').replace(/,/g, '').trim()
-          );
-          if (!isNaN(amount)) {
+
+          const description = (await row.locator('div').first().innerText())
+              .replace(/\s+/g, ' ')
+              .trim()
+              .toLowerCase();
+          const amountText = await row.locator('div').last().innerText();
+          const amount = Number(amountText.replace('৳', '').replace(/,/g, '').trim());
+
+          if (isNaN(amount)) continue;
+          if (description.includes('discount')) {
+              calculatedTotal -= amount;
+          } else {
               calculatedTotal += amount;
           }
       }
-      const displayedTotalText = await this.page
-          .locator('.total_a')
-          .innerText();
-
-      const displayedTotal = Number(
-          displayedTotalText.replace('৳', '').replace(/,/g, '').trim()
-      );
-
+      const displayedTotalText = await this.page.locator('.total_a').innerText();
+      const displayedTotal = Number(displayedTotalText.replace('৳', '').replace(/,/g, '').trim());
       expect(calculatedTotal).toBe(displayedTotal);
   }
+
+  async clickContinueButton() {
+    await this.page.getByRole('button', { name: 'Continue' }).click();
+  }
+
+
 }
