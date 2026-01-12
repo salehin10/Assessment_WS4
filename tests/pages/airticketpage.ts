@@ -1,9 +1,22 @@
-import { Page, expect } from '@playwright/test';
+import { Page, expect, Locator } from '@playwright/test';
 
 export class Airticketpage {
   private currentDate = new Date().toLocaleDateString('en-GB');
+  private cookieButton: Locator;
+  private pageHeading: Locator;
+  private oneWayTab: Locator;
+  private journeyDateInput: Locator;
+  private datePicker: Locator;
+  private searchButton: Locator;
   
-  constructor(private page: Page) {}
+  constructor(private page: Page) {
+    this.cookieButton = this.page.getByRole('button', { name: /don't allow/i });
+    this.pageHeading = this.page.getByRole('heading', { name: 'Popular Packages' }).first();
+    this.oneWayTab = this.page.getByRole('tab', { name: 'One Way' }).first();
+    this.journeyDateInput = this.page.locator('//input[@type=\'text\']').nth(4);
+    this.datePicker = this.page.locator('//div[@class="react-datepicker"]').nth(0);
+    this.searchButton = this.page.getByRole('button', { name: 'Search' });
+  }
 
   async goto() {
     await this.page.goto('/air-tickets');
@@ -11,28 +24,28 @@ export class Airticketpage {
   }
 
   async handleCookieConsent() {
-    await this.page.getByRole('button', { name: /don't allow/i }).click().catch(() => {});
+    await this.cookieButton.click().catch(() => {});
   }
 
   async validateTitle() {
-    await expect(this.page.getByRole('heading', { name: 'Popular Packages' }).first()).toBeVisible();
+    await expect(this.pageHeading).toBeVisible();
   }
 
   async selectOneWayTrip() {
     const currentDay = new Date().getDate();
-    await this.page.getByRole('tab', { name: 'One Way' }).first().click();
+    await this.oneWayTab.click();
   }
 
   async selectJourneyDate(){
     let tomorrow = new Date();
     tomorrow.setDate(tomorrow.getDate() + 1);
     let tomorrowDay = tomorrow.getDate();
-    await this.page.locator('//input[@type=\'text\']').nth(4).click();
-    await this.page.locator('//div[@class="react-datepicker"]').nth(0).focus();
+    await this.journeyDateInput.click();
+    await this.datePicker.focus();
     await this.page.getByRole('option', { name: `${tomorrowDay}th,` }).click();
   }
 
   async clickSearchButton(){
-    await this.page.getByRole('button', { name: 'Search' }).click();
+    await this.searchButton.click();
   }
 }
